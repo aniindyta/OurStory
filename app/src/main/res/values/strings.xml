@@ -17,4 +17,5 @@
     <string name="upload">Upload</string>
     <string name="descEditText">Description</string>
     <string name="desc" />
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

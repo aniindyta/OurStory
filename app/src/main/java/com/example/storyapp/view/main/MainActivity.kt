@@ -13,6 +13,7 @@ import com.example.storyapp.data.Result
 import com.example.storyapp.databinding.ActivityMainBinding
 import com.example.storyapp.view.ViewModelFactory
 import com.example.storyapp.view.detail.DetailStoryActivity
+import com.example.storyapp.view.map.MapsActivity
 import com.example.storyapp.view.story.PostStoryActivity
 import com.example.storyapp.view.welcome.WelcomeActivity
 
@@ -99,6 +100,9 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
+        mainBinding.mapButton.setOnClickListener {
+            startActivity(Intent(this, MapsActivity::class.java))
+        }
 
         mainBinding.fabPost.setOnClickListener {
             startActivity(Intent(this,PostStoryActivity::class.java))
