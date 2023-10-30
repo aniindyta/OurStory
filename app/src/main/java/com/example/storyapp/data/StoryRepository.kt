@@ -87,6 +87,23 @@ class StoryRepository private constructor(
         }
     }
 
+    fun getStoriesWithLocation() = liveData {
+        emit(Result.Loading)
+        try {
+            val user = runBlocking { userPreference.getSession().first() }
+            val response = ApiConfig.getApiService(user.token)
+            val successGetStoriesWithLocation = response.getStoriesWithLocation()
+            emit(Result.Success(successGetStoriesWithLocation))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            val errorMessage = errorResponse.message ?: "Failed to parse error response"
+            emit(Result.Error(errorMessage))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error"))
+        }
+    }
+
     fun getStoryDetail(storyId: String) = liveData {
         emit(Result.Loading)
         try {

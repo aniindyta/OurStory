@@ -1,8 +1,13 @@
 package com.example.storyapp.view.map
 
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import com.example.storyapp.R
+import com.example.storyapp.data.response.main.ListStoryItem
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,12 +16,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.storyapp.databinding.ActivityMapsBinding
+import com.example.storyapp.view.ViewModelFactory
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+
+    private val viewModel by viewModels<MapViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,16 +41,71 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-
+        setMapStyle()
 
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isIndoorLevelPickerEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        viewModel.getStoriesWithLocation().observe(this) { storiesResult ->
+            val alertDialog = AlertDialog.Builder(this)
+            when(storiesResult) {
+                is com.example.storyapp.data.Result.Error -> {
+                    val errorMessage = storiesResult.error
+                    alertDialog.apply {
+                        setTitle("Ups!")
+                        setMessage("$errorMessage.")
+                        setPositiveButton("Retry") { _, _ ->
+
+                        }
+                    }
+                }
+
+                com.example.storyapp.data.Result.Loading -> {
+
+                }
+
+                is com.example.storyapp.data.Result.Success -> {
+                    addManyMarker(storiesResult.data.listStory)
+                }
+            }
+        }
+    }
+
+    private fun setMapStyle() {
+        try {
+            val success =
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.")
+            }
+        } catch (exception: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", exception)
+        }
+    }
+
+    private val boundsBuilder = LatLngBounds.Builder()
+
+    private fun addManyMarker(stories: List<ListStoryItem>) {
+        stories.forEach { user ->
+            val latLng = LatLng(user.lat!!, user.lon!!)
+            mMap.addMarker(MarkerOptions().position(latLng).title(user.name))
+            boundsBuilder.include(latLng)
+        }
+
+        val bounds: LatLngBounds = boundsBuilder.build()
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds,
+                resources.displayMetrics.widthPixels,
+                resources.displayMetrics.heightPixels,
+                300
+            )
+        )
+    }
+
+    companion object {
+        private const val TAG = "MapsActivity"
     }
 }
