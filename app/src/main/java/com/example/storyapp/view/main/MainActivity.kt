@@ -43,7 +43,11 @@ class MainActivity : AppCompatActivity() {
         mainBinding.rvStory.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         mainBinding.rvStory.removeItemDecoration(itemDecoration)
-        mainBinding.rvStory.adapter = mainAdapter
+        mainBinding.rvStory.adapter = mainAdapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                mainAdapter.retry()
+            }
+        )
 
         mainAdapter.setOnItemClickListener { story, optionsCompat ->
             val intent = Intent(this, DetailStoryActivity::class.java)

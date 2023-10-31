@@ -18,4 +18,5 @@
     <string name="descEditText">Description</string>
     <string name="desc" />
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="retry">Retry</string>
 </resources>
