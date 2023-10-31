@@ -1,6 +1,10 @@
 package com.example.storyapp.data
 
 import androidx.lifecycle.liveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.storyapp.data.response.main.ListStoryItem
 import com.example.storyapp.data.response.register.ErrorResponse
 import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.data.retrofit.ApiService
@@ -70,21 +74,11 @@ class StoryRepository private constructor(
         }
     }
 
-    fun getStories() = liveData {
-        emit(Result.Loading)
-        try {
-            val user = runBlocking { userPreference.getSession().first() }
-            val response = ApiConfig.getApiService(user.token)
-            val successGetStories = response.getStories()
-            emit(Result.Success(successGetStories))
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            val errorMessage = errorResponse.message ?: "Failed to parse error response"
-            emit(Result.Error(errorMessage))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error"))
-        }
+    fun getStories(): Flow<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = { StoryPagingSource(userPreference) }
+        ).flow
     }
 
     fun getStoriesWithLocation() = liveData {
@@ -137,6 +131,8 @@ class StoryRepository private constructor(
             emit(Result.Error(e.message ?: "Unknown error"))
         }
     }
+
+
 
     companion object {
         @Volatile

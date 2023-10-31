@@ -4,14 +4,14 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.storyapp.data.response.main.ListStoryItem
 import com.example.storyapp.databinding.ItemRowBinding
 
-class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class MainAdapter : PagingDataAdapter<ListStoryItem, MainAdapter.MyViewHolder>(DIFF_CALLBACK) {
     private var onItemClick: ((ListStoryItem, ActivityOptionsCompat?) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (ListStoryItem, ActivityOptionsCompat?) -> Unit) {
@@ -33,7 +33,9 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MyViewHolder>(DIFF_CA
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val user = getItem(position)
-        holder.bind(user)
+        if (user != null) {
+            holder.bind(user)
+        }
 
         holder.itemView.setOnClickListener {
             val imageView = holder.binding.imgItemImage
@@ -47,7 +49,9 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MyViewHolder>(DIFF_CA
                 androidx.core.util.Pair(descriptionView, "description")
             )
 
-            onItemClick?.invoke(user, optionsCompat)
+            if (user != null) {
+                onItemClick?.invoke(user, optionsCompat)
+            }
         }
     }
 

@@ -9,19 +9,21 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.storyapp.R
-import com.example.storyapp.data.Result
 import com.example.storyapp.databinding.ActivityMainBinding
 import com.example.storyapp.view.ViewModelFactory
 import com.example.storyapp.view.detail.DetailStoryActivity
 import com.example.storyapp.view.map.MapsActivity
 import com.example.storyapp.view.story.PostStoryActivity
 import com.example.storyapp.view.welcome.WelcomeActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
     }
+    private val mainAdapter = MainAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,37 +43,7 @@ class MainActivity : AppCompatActivity() {
         mainBinding.rvStory.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         mainBinding.rvStory.removeItemDecoration(itemDecoration)
-
-        val mainAdapter = MainAdapter()
         mainBinding.rvStory.adapter = mainAdapter
-
-        viewModel.getStories().observe(this) { storiesResult ->
-            val alertDialog = AlertDialog.Builder(this)
-            when(storiesResult) {
-                is Result.Loading -> {
-                    mainBinding.progressBar.visibility = View.VISIBLE
-                }
-
-                is Result.Success -> {
-                    mainBinding.progressBar.visibility = View.GONE
-                    val storyResponse = storiesResult.data
-                    val stories = storyResponse.listStory
-                    mainAdapter.submitList(stories)
-                }
-
-                is Result.Error -> {
-                    mainBinding.progressBar.visibility = View.GONE
-                    val errorMessage = storiesResult.error
-                    alertDialog.apply {
-                        setTitle("Ups!")
-                        setMessage("$errorMessage.")
-                        setPositiveButton("Retry") { _, _ ->
-
-                        }
-                    }
-                }
-            }
-        }
 
         mainAdapter.setOnItemClickListener { story, optionsCompat ->
             val intent = Intent(this, DetailStoryActivity::class.java)
@@ -80,24 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainBinding.logoutButton.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(this)
-            alertDialog.apply {
-                setTitle("Logout")
-                setMessage("Are you sure you want to log out?")
-                setNegativeButton("Yes") { _, _ ->
-                    viewModel.logout()
-
-                    val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                }
-
-                setPositiveButton("No") { _, _ ->
-
-                }
-            }
-            val dialog = alertDialog.create()
-            dialog.show()
+            showLogoutDialog()
         }
 
         mainBinding.mapButton.setOnClickListener {
@@ -105,7 +60,36 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainBinding.fabPost.setOnClickListener {
-            startActivity(Intent(this,PostStoryActivity::class.java))
+            startActivity(Intent(this, PostStoryActivity::class.java))
         }
+
+        @Suppress("DEPRECATION")
+        lifecycleScope.launchWhenStarted {
+            viewModel.getStories().collectLatest { pagingData ->
+                mainBinding.progressBar.visibility = View.GONE
+                mainAdapter.submitData(pagingData)
+            }
+        }
+    }
+
+    private fun showLogoutDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            setTitle("Logout")
+            setMessage("Are you sure you want to log out?")
+            setNegativeButton("Yes") { _, _ ->
+                viewModel.logout()
+
+                val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+
+            setPositiveButton("No") { _, _ ->
+
+            }
+        }
+        val dialog = alertDialog.create()
+        dialog.show()
     }
 }
