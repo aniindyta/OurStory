@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         is Result.Success -> {
-                            loginViewModel.saveSession(UserModel(result.data.loginResult!!.name, email,result.data.loginResult!!.token))
+                            loginViewModel.saveSession(UserModel(result.data.loginResult!!.name, email,result.data.loginResult.token))
                             Log.d("TOKEN", "login: ${result.data.loginResult.token}")
                             val intent = Intent(this, MainActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

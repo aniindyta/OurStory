@@ -17,7 +17,7 @@ class StoryPagingSource(private val userPreference: UserPreference) : PagingSour
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListStoryItem> {
-        val position = params.key ?: 1
+        val position = params.key ?: INITIAL_PAGE_INDEX
 
         val user = runBlocking { userPreference.getSession().first() }
         val response = ApiConfig.getApiService(user.token)

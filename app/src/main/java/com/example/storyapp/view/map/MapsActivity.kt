@@ -48,6 +48,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
+        val dicodingSpace = LatLng(-6.8957643, 107.6338462)
+        mMap.addMarker(
+            MarkerOptions()
+                .position(dicodingSpace)
+                .title("Dicoding Space")
+                .snippet("Batik Kumeli No.50")
+        )
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dicodingSpace, 15f))
+
         viewModel.getStoriesWithLocation().observe(this) { storiesResult ->
             val alertDialog = AlertDialog.Builder(this)
             when(storiesResult) {

@@ -31,7 +31,7 @@ class DetailStoryActivity : AppCompatActivity() {
                     detailStoryBinding.tvName.text = story.name
                     detailStoryBinding.tvDesc.text = story.description
                     Glide.with(this).load(story.photoUrl).into(detailStoryBinding.imgItemImage)
-                    viewModel.getStoryDetail(story.id!!).observe(this) { storyResult ->
+                    viewModel.getStoryDetail(story.id).observe(this) { storyResult ->
                         val alertDialog = AlertDialog.Builder(this)
                         when (storyResult) {
                             is Result.Loading -> {

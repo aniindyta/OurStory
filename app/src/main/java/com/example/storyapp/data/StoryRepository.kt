@@ -1,6 +1,7 @@
 package com.example.storyapp.data
 
 import androidx.lifecycle.liveData
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -10,6 +11,8 @@ import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.data.retrofit.ApiService
 import com.example.storyapp.data.retrofit.UserModel
 import com.example.storyapp.data.retrofit.UserPreference
+import com.example.storyapp.database.StoryDatabase
+import com.example.storyapp.database.StoryRemoteMediator
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,7 +23,8 @@ import retrofit2.HttpException
 
 class StoryRepository private constructor(
     private val apiService: ApiService,
-    private val userPreference: UserPreference
+    private val userPreference: UserPreference,
+    private val storyDatabase: StoryDatabase
 ) {
     suspend fun saveSession(user: UserModel) {
         userPreference.saveSession(user)
@@ -74,9 +78,11 @@ class StoryRepository private constructor(
         }
     }
 
+    @OptIn(ExperimentalPagingApi::class)
     fun getStories(): Flow<PagingData<ListStoryItem>> {
         return Pager(
             config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            remoteMediator = StoryRemoteMediator(storyDatabase, apiService),
             pagingSourceFactory = { StoryPagingSource(userPreference) }
         ).flow
     }
@@ -132,17 +138,16 @@ class StoryRepository private constructor(
         }
     }
 
-
-
     companion object {
         @Volatile
         private var instance: StoryRepository? = null
         fun getInstance(
             apiService: ApiService,
-            userPreference: UserPreference
+            userPreference: UserPreference,
+            storyDatabase: StoryDatabase
         ): StoryRepository =
             instance ?: synchronized(this) {
-                instance ?: StoryRepository(apiService, userPreference)
+                instance ?: StoryRepository(apiService, userPreference, storyDatabase)
             }.also { instance = it }
     }
 }

@@ -5,6 +5,7 @@ import com.example.storyapp.data.StoryRepository
 import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.data.retrofit.UserPreference
 import com.example.storyapp.data.retrofit.dataStore
+import com.example.storyapp.database.StoryDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -13,6 +14,7 @@ object Injection {
         val pref = UserPreference.getInstance(context.dataStore)
         val user = runBlocking { pref.getSession().first() }
         val apiService = ApiConfig.getApiService(user.token)
-        return StoryRepository.getInstance(apiService, pref)
+        val storyDatabase = StoryDatabase.getInstance(context)
+        return StoryRepository.getInstance(apiService, pref, storyDatabase)
     }
 }
