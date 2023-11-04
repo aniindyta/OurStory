@@ -1,5 +1,6 @@
 package com.example.storyapp.view.story
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -86,6 +87,7 @@ class PostStoryActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NewApi")
     private fun uploadImage() {
         postStoryViewModel.getSession().observe(this) { user ->
             if (user.isLogin) {

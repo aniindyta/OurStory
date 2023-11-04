@@ -1,10 +1,12 @@
 package com.example.storyapp.data
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.example.storyapp.data.response.main.ListStoryItem
 import com.example.storyapp.data.response.register.ErrorResponse
 import com.example.storyapp.data.retrofit.ApiConfig
@@ -79,12 +81,12 @@ class StoryRepository private constructor(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getStories(): Flow<PagingData<ListStoryItem>> {
+    fun getStories(): LiveData<PagingData<ListStoryItem>> {
         return Pager(
             config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-            remoteMediator = StoryRemoteMediator(storyDatabase, apiService),
-            pagingSourceFactory = { StoryPagingSource(userPreference) }
-        ).flow
+            remoteMediator = StoryRemoteMediator(storyDatabase, userPreference),
+            pagingSourceFactory = { storyDatabase.storyDao().allStory!! }
+        ).liveData
     }
 
     fun getStoriesWithLocation() = liveData {

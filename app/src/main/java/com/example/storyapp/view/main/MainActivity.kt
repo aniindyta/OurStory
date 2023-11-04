@@ -3,7 +3,6 @@ package com.example.storyapp.view.main
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,8 +14,6 @@ import com.example.storyapp.view.detail.DetailStoryActivity
 import com.example.storyapp.view.map.MapsActivity
 import com.example.storyapp.view.story.PostStoryActivity
 import com.example.storyapp.view.welcome.WelcomeActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
@@ -43,11 +40,8 @@ class MainActivity : AppCompatActivity() {
         mainBinding.rvStory.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         mainBinding.rvStory.removeItemDecoration(itemDecoration)
-        mainBinding.rvStory.adapter = mainAdapter.withLoadStateFooter(
-            footer = LoadingStateAdapter {
-                mainAdapter.retry()
-            }
-        )
+
+        getData()
 
         mainAdapter.setOnItemClickListener { story, optionsCompat ->
             val intent = Intent(this, DetailStoryActivity::class.java)
@@ -66,13 +60,17 @@ class MainActivity : AppCompatActivity() {
         mainBinding.fabPost.setOnClickListener {
             startActivity(Intent(this, PostStoryActivity::class.java))
         }
+    }
 
-        @Suppress("DEPRECATION")
-        lifecycleScope.launchWhenStarted {
-            viewModel.getStories().collectLatest { pagingData ->
-                mainBinding.progressBar.visibility = View.GONE
-                mainAdapter.submitData(pagingData)
+    private fun getData() {
+        val adapter = MainAdapter()
+        mainBinding.rvStory.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
             }
+        )
+        viewModel.getStories().observe(this) {
+            adapter.submitData(lifecycle, it)
         }
     }
 

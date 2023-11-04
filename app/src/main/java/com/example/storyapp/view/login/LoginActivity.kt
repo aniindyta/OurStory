@@ -52,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
                                 setTitle("Ups!")
                                 setMessage("$errorMessage.")
                                 setPositiveButton("Retry") { _, _ ->
+
                                 }
                             }
                         }

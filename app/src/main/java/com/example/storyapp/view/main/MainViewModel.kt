@@ -9,11 +9,10 @@ import androidx.paging.cachedIn
 import com.example.storyapp.data.StoryRepository
 import com.example.storyapp.data.response.main.ListStoryItem
 import com.example.storyapp.data.retrofit.UserModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val storyRepository: StoryRepository) : ViewModel() {
-    fun getStories(): Flow<PagingData<ListStoryItem>> {
+    fun getStories(): LiveData<PagingData<ListStoryItem>> {
         return storyRepository.getStories().cachedIn(viewModelScope)
     }
 

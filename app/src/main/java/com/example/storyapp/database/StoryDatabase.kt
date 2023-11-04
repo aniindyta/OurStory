@@ -7,26 +7,29 @@ import androidx.room.RoomDatabase
 import com.example.storyapp.data.response.main.ListStoryItem
 
 @Database(
-    entities = [ListStoryItem::class],
-    version = 1,
+    entities = [ListStoryItem::class, RemoteKeys::class],
+    version = 2,
     exportSchema = false
 )
-
 abstract class StoryDatabase : RoomDatabase() {
-    abstract fun storyDao() : StoryDao
+    abstract fun storyDao(): StoryDao
+    abstract fun remoteKeysDao(): RemoteKeysDao
 
     companion object {
+        @Volatile
         private var INSTANCE: StoryDatabase? = null
 
-        fun getInstance(context: Context): StoryDatabase {
+        @JvmStatic
+        fun getDatabase(context: Context): StoryDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
+                INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
-                    StoryDatabase::class.java,
-                    "story_database"
-                ).build()
-                INSTANCE = instance
-                instance
+                    StoryDatabase::class.java, "story_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }
