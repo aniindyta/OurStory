@@ -1,4 +1,4 @@
-![image](https://github.com/aniindyta/OurStory/assets/87638112/e72a57cd-e060-48ed-9621-cab49660dcd3)<h1 align="center">
+<h1 align="center">
   Our Story
 </h1>
 <p align="center">
@@ -29,7 +29,7 @@ In the development journey of this project, the following key components have be
 ## Showcase
 |Welcome Screen|Login|Sign Up|
 |--|--|--|
-|![Screenshot_2023-12-01-11-55-57-786_com example storyapp](https://github.com/aniindyta/OurStory/assets/87638112/f4a62dab-ce07-43d8-8952-2ce3a24ef7d4)|![Screenshot_2023-12-01-11-56-01-783_com example storyapp](https://github.com/aniindyta/OurStory/assets/87638112/abf27c0a-aca7-4b5f-89b8-2d16a52a9727)|![Screenshot_2023-12-01-11-56-05-390_com example storyapp](https://github.com/aniindyta/OurStory/assets/87638112/ab31d863-e419-427a-bc33-5d03cf5be227)|
+|![image](https://github.com/aniindyta/OurStory/assets/87638112/3e682b3d-3bb8-45cf-84ca-3f34c40ddabc)|![image](https://github.com/aniindyta/OurStory/assets/87638112/04f24d51-91f7-49a3-9d5c-e5166416ebb4)|![image](https://github.com/aniindyta/OurStory/assets/87638112/150c1c14-57d9-44f2-b5fd-183162e8caeb)
 
 |Home|Create New Story|Maps|
 |--|--|--|
