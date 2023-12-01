@@ -2,7 +2,7 @@
   Our Story
 </h1>
 <p align="center">
-  This repository contains the source code for my project submissions in the "Belajar Pengembangan Aplikasi Android Intermediate" course at Dicoding. The project spans from the initial submission to the final one and is a part of my self-paced learning journey in the Bangkit 2023 Mobile Development learning path. Please use this repository as reference only!
+  This repository contains the source code for my project submissions in the "Belajar Pengembangan Aplikasi Android Intermediate" course at Dicoding. The project spans from the initial submission to the final one and is a part of my self-paced learning journey in the Bangkit 2023 Mobile Development learning path. Please use this repository as reference only!</br>
 </p>
 
 ## Project Highlights
@@ -22,14 +22,16 @@ In the development journey of this project, the following key components have be
 
 - [x] **Unit Test** : Implemented unit tests to ensure the reliability and functionality of individual components within the project.
 
+
 ## Installation
 1. Clone this repository 
 2. Add this code `MAPS_API_KEY=YOUR_API_KEY` to `local.properties` file, replace `YOUR_API_KEY` with your own [Google Map Api Key](https://console.cloud.google.com/google/maps-apis/credentials)
 
+
 ## Showcase
 |Welcome Screen|Login|Sign Up|
 |--|--|--|
-|![image](https://github.com/aniindyta/OurStory/assets/87638112/3e682b3d-3bb8-45cf-84ca-3f34c40ddabc)|![image](https://github.com/aniindyta/OurStory/assets/87638112/04f24d51-91f7-49a3-9d5c-e5166416ebb4)|![image](https://github.com/aniindyta/OurStory/assets/87638112/150c1c14-57d9-44f2-b5fd-183162e8caeb)
+|![image](https://github.com/aniindyta/OurStory/assets/87638112/04f24d51-91f7-49a3-9d5c-e5166416ebb4)|![image](https://github.com/aniindyta/OurStory/assets/87638112/3e682b3d-3bb8-45cf-84ca-3f34c40ddabc)|![image](https://github.com/aniindyta/OurStory/assets/87638112/150c1c14-57d9-44f2-b5fd-183162e8caeb)
 
 |Home|Create New Story|Maps|
 |--|--|--|
